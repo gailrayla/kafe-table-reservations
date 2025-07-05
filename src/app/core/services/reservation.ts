@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Observable, BehaviorSubject, of, throwError } from 'rxjs';
 import { delay, map, catchError } from 'rxjs/operators';
 import { ReservationRequest, ReservationResponse } from '../models';
@@ -11,50 +12,48 @@ export class ReservationService {
   private reservationsSubject = new BehaviorSubject<ReservationResponse[]>([]);
   public reservations$ = this.reservationsSubject.asObservable();
 
-  // Mock existing reservations for testing
-  private mockReservations: ReservationResponse[] = [
-    {
-      id: '1',
-      confirmationNumber: 'KF001',
-      status: ReservationStatus.CONFIRMED,
-      createdAt: new Date('2024-07-24T10:30:00'),
-      reservation: {
-        date: '2024-07-24',
-        timeSlot: '19:00',
-        partySize: 4,
-        regionId: RegionType.MAIN_HALL,
-        customerInfo: {
-          name: 'John Doe',
-          email: 'john@example.com',
-          phone: '+1234567890',
-        },
-        hasChildren: false,
-        needsSmoking: false,
-      },
-    },
-    {
-      id: '2',
-      confirmationNumber: 'KF002',
-      status: ReservationStatus.CONFIRMED,
-      createdAt: new Date('2024-07-25T14:15:00'),
-      reservation: {
-        date: '2024-07-25',
-        timeSlot: '20:00',
-        partySize: 2,
-        regionId: RegionType.BAR,
-        customerInfo: {
-          name: 'Jane Smith',
-          email: 'jane@example.com',
-          phone: '+1987654321',
-        },
-        hasChildren: false,
-        needsSmoking: false,
-      },
-    },
-  ];
+  private readonly STORAGE_KEY = 'kafe_reservations';
+  private isBrowser: boolean;
 
-  constructor() {
-    this.reservationsSubject.next(this.mockReservations);
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+
+    if (this.isBrowser) {
+      this.loadReservationsFromStorage();
+    }
+  }
+
+  private loadReservationsFromStorage(): void {
+    if (!this.isBrowser) return;
+
+    try {
+      const stored = localStorage.getItem(this.STORAGE_KEY);
+
+      if (stored) {
+        const reservations = JSON.parse(stored);
+        reservations.forEach((r: ReservationResponse) => {
+          r.createdAt = new Date(r.createdAt);
+        });
+        this.reservationsSubject.next(reservations);
+      } else {
+      }
+    } catch (error) {
+      console.error('Error loading reservations from localStorage:', error);
+    }
+  }
+
+  private saveReservationsToStorage(reservations: ReservationResponse[]): void {
+    if (!this.isBrowser) return;
+
+    try {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(reservations));
+    } catch (error) {
+      console.error('Error saving reservations to localStorage:', error);
+    }
+  }
+
+  private get reservations(): ReservationResponse[] {
+    return this.reservationsSubject.value;
   }
 
   createReservation(
@@ -71,8 +70,9 @@ export class ReservationService {
           reservation: req,
         };
 
-        this.mockReservations.push(reservation);
-        this.reservationsSubject.next([...this.mockReservations]);
+        const updatedReservations = [...this.reservations, reservation];
+        this.reservationsSubject.next(updatedReservations);
+        this.saveReservationsToStorage(updatedReservations);
 
         return reservation;
       }),
@@ -86,13 +86,20 @@ export class ReservationService {
   getReservationByConfirmation(
     confirmationNumber: string
   ): Observable<ReservationResponse | null> {
-    return of(null).pipe(
-      delay(300),
-      map(() => {
-        const reservation = this.mockReservations.find(
-          (r) => r.confirmationNumber === confirmationNumber
+    return of(confirmationNumber).pipe(
+      delay(300), // Simulate API call
+      map((confNum) => {
+        const currentReservations = this.reservations;
+
+        const reservation = currentReservations.find(
+          (r) => r.confirmationNumber === confNum
         );
+
         return reservation || null;
+      }),
+      catchError((error) => {
+        console.error('Error finding reservation:', error);
+        return of(null);
       })
     );
   }
@@ -104,10 +111,12 @@ export class ReservationService {
     return of(null).pipe(
       delay(200),
       map(() => {
-        return this.mockReservations.filter(
+        const currentReservations = this.reservations;
+        const reservationsForSlot = currentReservations.filter(
           (r) =>
             r.reservation.date === date && r.reservation.timeSlot === timeSlot
         );
+        return reservationsForSlot;
       })
     );
   }
@@ -116,7 +125,8 @@ export class ReservationService {
     return of(confirmationNumber).pipe(
       delay(500),
       map((confNum) => {
-        const reservationIndex = this.mockReservations.findIndex(
+        const currentReservations = this.reservations;
+        const reservationIndex = currentReservations.findIndex(
           (r) => r.confirmationNumber === confNum
         );
 
@@ -124,9 +134,12 @@ export class ReservationService {
           throw new Error('Reservation not found');
         }
 
-        this.mockReservations[reservationIndex].status =
+        const updatedReservations = [...currentReservations];
+        updatedReservations[reservationIndex].status =
           ReservationStatus.CANCELLED;
-        this.reservationsSubject.next([...this.mockReservations]);
+
+        this.reservationsSubject.next(updatedReservations);
+        this.saveReservationsToStorage(updatedReservations);
 
         return true;
       }),
@@ -139,6 +152,13 @@ export class ReservationService {
 
   getAllReservations(): Observable<ReservationResponse[]> {
     return this.reservations$;
+  }
+
+  clearAllReservations(): void {
+    if (this.isBrowser) {
+      localStorage.removeItem(this.STORAGE_KEY);
+    }
+    this.reservationsSubject.next([]);
   }
 
   private generateId(): string {

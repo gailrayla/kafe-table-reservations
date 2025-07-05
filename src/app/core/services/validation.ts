@@ -24,7 +24,6 @@ export class ValidationService {
     formData: ReservationFormData
   ): Observable<ValidationResult> {
     return of(formData).pipe(
-      delay(100),
       map((data) => {
         const errors: FormValidationErrors = {};
 
