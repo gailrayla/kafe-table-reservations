@@ -2,8 +2,8 @@
   min-height: 100vh;
   background: linear-gradient(
     135deg,
-    hsla(var(--success-hsl), 0.1) 0%,
-    hsla(var(--success-hsl), 0.05) 100%
+    hsla(var(--primary-hsl), 0.1) 0%,
+    hsla(var(--primary-hsl), 0.05) 100%
   );
   padding: var(--spacing-xl) 0;
   font-family: var(--font-family-primary);
@@ -61,7 +61,7 @@
   &__title {
     font-size: 2rem;
     font-weight: var(--font-weight-bold);
-    color: var(--success-color);
+    color: var(--primary-color);
     margin: 0 0 var(--spacing-md) 0;
   }
 
