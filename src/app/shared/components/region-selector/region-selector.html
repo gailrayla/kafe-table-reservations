@@ -1,0 +1,80 @@
+<div class="region-selector">
+  <div class="region-selector__header">
+    <h3 class="region-selector__title">Select Region</h3>
+    <p class="region-selector__subtitle">
+      {{ getRegionAvailabilityMessage() }}
+    </p>
+  </div>
+
+  @if (loading) {
+  <div class="region-selector__loading">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+  } @if (!selectedDate || !selectedTimeSlot) {
+  <div class="region-selector__message">
+    <p class="region-selector__message-text">
+      👆 Select date and time first to see available regions
+    </p>
+  </div>
+  } @if (!loading && selectedDate && selectedTimeSlot && availableRegions.length
+  > 0) {
+  <div class="region-selector__grid">
+    @for (region of availableRegions; track region.id) {
+    <div
+      class="region-selector__region"
+      [class.region-selector__region--selected]="selectedRegionId === region.id"
+      [class.region-selector__region--disabled]="disabled"
+      (click)="onRegionSelect(region.id)"
+      [attr.aria-label]="region.name"
+    >
+      <div class="region-selector__region-header">
+        <h4 class="region-selector__region-name">{{ region.name }}</h4>
+        <span class="region-selector__region-capacity">
+          Up to {{ region.maxSize }} guests
+        </span>
+      </div>
+
+      @if (getRegionConstraints(region).length > 0) {
+      <div class="region-selector__region-constraints">
+        @for (constraint of getRegionConstraints(region); track constraint) {
+        <span class="region-selector__constraint-badge">
+          {{ constraint }}
+        </span>
+        }
+      </div>
+      }
+
+      <div class="region-selector__region-policies">
+        <div class="region-selector__policy">
+          <span class="region-selector__policy-icon"> 👨‍👩‍👧‍👦 </span>
+          <span class="region-selector__policy-text">
+            {{ region.childrenAllowed ? "Family friendly" : "Adults only" }}
+          </span>
+        </div>
+
+        <div class="region-selector__policy">
+          <span class="region-selector__policy-icon"> 🚭 </span>
+          <span class="region-selector__policy-text">
+            {{ region.smokingAllowed ? "Smoking allowed" : "Non-smoking" }}
+          </span>
+        </div>
+      </div>
+
+      @if (selectedRegionId === region.id) {
+      <div class="region-selector__select-indicator">
+        <span class="region-selector__checkmark">✓</span>
+        <span>Selected</span>
+      </div>
+      }
+    </div>
+    }
+  </div>
+  } @if ( !loading && selectedDate && selectedTimeSlot &&
+  availableRegions.length === 0 ) {
+  <div class="region-selector__empty">
+    <p class="region-selector__empty-text">
+      No regions available for your selection. Try a different time or date.
+    </p>
+  </div>
+  }
+</div>
