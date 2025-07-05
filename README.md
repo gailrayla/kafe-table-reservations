@@ -1,59 +1,91 @@
-# KafeTableReservations
+# Kafè Table Reservations
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.5.
+A single-page application for online table reservations at Kafè restaurant. Built with Angular 20.0.5 and TypeScript.
 
-## Development server
+## 🎯 About
 
-To start a local development server, run:
+**Business Rules:**
+
+- Reservations: July 24-31, 6:00 PM - 10:00 PM (30-minute slots)
+- Party size: Up to 12 guests
+- One table per booking
+
+**Dining Regions:**
+| Region | Max Size | Children | Smoking |
+|--------|----------|----------|---------|
+| Main Hall | 12 | ✅ | ❌ |
+| Bar | 4 | ❌ | ❌ |
+| Riverside | 8 | ✅ | ❌ |
+| Riverside (Smoking) | 6 | ❌ | ✅ |
+
+## 🚀 Features
+
+- **Smart Availability**: Real-time checking with conflict resolution
+- **Intelligent Filtering**: Automatically filters regions based on party requirements
+- **Form Validation**: Comprehensive validation with helpful error messages
+- **Responsive Design**: Works seamlessly on desktop and mobile
+
+## 🛠️ Tech Stack
+
+- Angular 20.0.5 + TypeScript
+- SCSS styling
+- Karma + Jasmine testing
+- Feature-based architecture
+
+## 📁 Project Structure
+
+### Core Services
+
+- **`availability.ts`** - Manages table availability logic and conflict detection
+- **`reservation.ts`** - Handles reservation creation and validation
+- **`validation.ts`** - Form validation rules and error handling
+
+### Models
+
+- **`reservation.model.ts`** - Reservation data structure
+- **`availability.model.ts`** - Availability checking interfaces
+- **`region.model.ts`** - Restaurant region definitions
+- **`form-validation.model.ts`** - Validation rule interfaces
+
+### Shared Components
+
+- **`date-picker`** - Custom date selection component
+- **`time-slot-selector`** - Time slot selection with availability display
+- **`region-selector`** - Region selection with filtering logic
+- **`form-field`** - Reusable form input with validation
+- **`loading-spinner`** - Loading states throughout the app
+
+### Reservation Components
+
+- **`reservation-form`** - Main booking form with multi-step logic
+- **`reservation-summary`** - Booking details review
+- **`reservation-confirmation`** - Final confirmation with booking details
+
+## 🔧 How It Works
+
+1. **Selection Phase**: User picks date, time, party size
+2. **Smart Filtering**: System automatically filters available regions based on party requirements (children/smoking)
+3. **Availability Check**: Real-time validation against restaurant capacity
+4. **Conflict Resolution**: If unavailable, suggests alternative times/regions
+5. **Information Collection**: Gathers contact details and special requirements
+6. **Confirmation**: Creates reservation with unique booking reference
+
+## 🔧 Setup
 
 ```bash
-ng serve
-```
+# Clone and install
+git clone [repository-url]
+cd kafe-table-reservations
+npm install
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+# Development server
+ng serve  # http://localhost:4200
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
+# Build & test
 ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
 ng test
 ```
 
-## Running end-to-end tests
+---
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+_Angular 20.0.5 • TypeScript • Restaurant Reservation System for a Technical Assignment_
