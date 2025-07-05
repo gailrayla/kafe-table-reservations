@@ -1,0 +1,15 @@
+<div class="loading-spinner" [class]="'loading-spinner--' + size">
+  <div
+    class="loading-spinner__spinner"
+    [class]="'loading-spinner__spinner--' + color"
+  >
+    <div class="loading-spinner__dot"></div>
+    <div class="loading-spinner__dot"></div>
+    <div class="loading-spinner__dot"></div>
+    <div class="loading-spinner__dot"></div>
+  </div>
+
+  @if (message) {
+  <p class="loading-spinner__message">{{ message }}</p>
+  }
+</div>

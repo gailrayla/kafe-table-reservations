@@ -1,0 +1,55 @@
+<div class="time-slot-selector">
+  <div class="time-slot-selector__header">
+    <h3 class="time-slot-selector__title">Select Time</h3>
+
+    @if (selectedDate) {
+    <p class="time-slot-selector__subtitle">
+      Available times for {{ formatDateForDisplay(selectedDate!) }}
+    </p>
+    } @else {
+    <p class="time-slot-selector__subtitle">Please select a date first</p>
+    }
+  </div>
+
+  @if (loading) {
+  <div class="time-slot-selector__loading">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+  } @if (!selectedDate && !loading) {
+  <div class="time-slot-selector__message">
+    <p class="time-slot-selector__message-text">
+      👆 Select a date above to see available times
+    </p>
+  </div>
+  } @if (!loading && selectedDate && timeSlots.length > 0) {
+  <div class="time-slot-selector__grid">
+    @for (slot of timeSlots; track slot.time) {
+    <button
+      type="button"
+      class="time-slot-selector__slot"
+      [class.time-slot-selector__slot--selected]="
+        selectedTimeSlot === slot.time
+      "
+      [class.time-slot-selector__slot--available]="slot.available"
+      [class.time-slot-selector__slot--unavailable]="!slot.available"
+      [disabled]="disabled || !slot.available"
+      (click)="onTimeSlotSelect(slot.time)"
+      [attr.aria-label]="formatTimeForDisplay(slot.time)"
+    >
+      <span class="time-slot-selector__slot-time">
+        {{ formatTimeForDisplay(slot.time) }}
+      </span>
+      <span class="time-slot-selector__slot-status">
+        {{ slot.available ? "Available" : "Booked" }}
+      </span>
+    </button>
+    }
+  </div>
+  } @if (!loading && selectedDate && timeSlots.length === 0) {
+  <div class="time-slot-selector__empty">
+    <p class="time-slot-selector__empty-text">
+      No time slots available for this date
+    </p>
+  </div>
+  }
+</div>

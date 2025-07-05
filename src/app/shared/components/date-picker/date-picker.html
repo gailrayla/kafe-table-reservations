@@ -1,0 +1,57 @@
+<div class="date-picker">
+  <div class="date-picker__header">
+    <h3 class="date-picker__title">Select Date</h3>
+    <p class="date-picker__subtitle">Choose from available dates</p>
+  </div>
+
+  @if (loading) {
+  <div class="date-picker__loading">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+  } @else {
+  <div class="date-picker__grid">
+    @for (date of availableDates; track date) {
+    <button
+      type="button"
+      class="date-picker__date"
+      [class.date-picker__date--selected]="selectedDate === date"
+      [class.date-picker__date--available]="dateAvailability[date]"
+      [class.date-picker__date--unavailable]="!dateAvailability[date]"
+      [disabled]="disabled || !dateAvailability[date]"
+      (click)="onDateSelect(date)"
+      [attr.aria-label]="formatDateForDisplay(date)"
+    >
+      <span class="date-picker__date-text">
+        {{ formatDateForDisplay(date) }}
+      </span>
+      <span
+        class="date-picker__availability-indicator"
+        [class.date-picker__availability-indicator--available]="
+          dateAvailability[date]
+        "
+        [class.date-picker__availability-indicator--unavailable]="
+          !dateAvailability[date]
+        "
+      >
+        {{ dateAvailability[date] ? "Available" : "Full" }}
+      </span>
+    </button>
+    }
+  </div>
+  }
+
+  <div class="date-picker__legend">
+    <div class="date-picker__legend-item">
+      <span
+        class="date-picker__legend-dot date-picker__legend-dot--available"
+      ></span>
+      <span>Available</span>
+    </div>
+    <div class="date-picker__legend-item">
+      <span
+        class="date-picker__legend-dot date-picker__legend-dot--unavailable"
+      ></span>
+      <span>Fully Booked</span>
+    </div>
+  </div>
+</div>
