@@ -65,13 +65,7 @@ cd kafe-table-reservations
 npm install
 
 # Development server
-ng serve  # http://localhost:4200
-
-# Build & test
-ng build
-ng test
-```
-
+ng start  # http://localhost:4200
 ---
 
 _Angular 20.0.5 • TypeScript • Restaurant Reservation System for a Technical Assignment_
