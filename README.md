@@ -66,6 +66,6 @@ npm install
 
 # Development server
 ng start  # http://localhost:4200
+```
 ---
-
 _Angular 20.0.5 • TypeScript • Restaurant Reservation System for a Technical Assignment_
