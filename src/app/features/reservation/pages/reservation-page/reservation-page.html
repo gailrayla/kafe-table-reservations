@@ -1,0 +1,18 @@
+<div class="reservation-page">
+  <div class="reservation-page__container">
+    <div class="reservation-page__header">
+      <h1 class="reservation-page__title">Reserve Your Table</h1>
+      <p class="reservation-page__subtitle">
+        Book your dining experience at Kafè - Manhattan's premier Andorran
+        restaurant
+      </p>
+    </div>
+
+    <div class="reservation-page__content">
+      <app-reservation-form
+        (reservationCreated)="onReservationCreated($event)"
+        (formStepChanged)="onFormStepChanged($event)"
+      ></app-reservation-form>
+    </div>
+  </div>
+</div>

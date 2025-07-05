@@ -1,0 +1,119 @@
+<div class="reservation-summary">
+  <div class="reservation-summary__header">
+    <h2 class="reservation-summary__title">Review Your Reservation</h2>
+    <p class="reservation-summary__subtitle">
+      Please confirm the details below
+    </p>
+  </div>
+
+  <div class="reservation-summary__card">
+    <div class="reservation-summary__section">
+      <h3 class="reservation-summary__section-title">📅 Date & Time</h3>
+      <div class="reservation-summary__detail">
+        <strong>{{ formatDate(reservationData.date) }}</strong>
+      </div>
+      <div class="reservation-summary__detail">
+        {{ formatTime(reservationData.timeSlot) }}
+      </div>
+    </div>
+
+    <div class="reservation-summary__section">
+      <h3 class="reservation-summary__section-title">👥 Party Details</h3>
+      <div class="reservation-summary__detail">
+        {{ getPartyDescription() }}
+      </div>
+
+      @if (reservationData.hasChildren || reservationData.needsSmoking) {
+      <div class="reservation-summary__preferences">
+        @if (reservationData.hasChildren) {
+        <span class="reservation-summary__preference-tag">
+          👶 Children included
+        </span>
+        } @if (reservationData.needsSmoking) {
+        <span class="reservation-summary__preference-tag">
+          🚬 Smoking preferred
+        </span>
+        }
+      </div>
+      }
+    </div>
+
+    <div class="reservation-summary__section">
+      <h3 class="reservation-summary__section-title">🏛️ Dining Area</h3>
+      <div class="reservation-summary__detail">
+        <strong>{{ selectedRegion?.name }}</strong>
+      </div>
+      <div class="reservation-summary__region-info">
+        <span class="reservation-summary__region-capacity">
+          Up to {{ selectedRegion?.maxSize }} guests
+        </span>
+        <div class="reservation-summary__region-policies">
+          <span class="reservation-summary__policy">
+            {{
+              selectedRegion?.childrenAllowed
+                ? "👨‍👩‍👧‍👦 Family friendly"
+                : "🔞 Adults only"
+            }}
+          </span>
+          <span class="reservation-summary__policy">
+            {{
+              selectedRegion?.smokingAllowed
+                ? "🚬 Smoking allowed"
+                : "🚭 Non-smoking"
+            }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="reservation-summary__section">
+      <h3 class="reservation-summary__section-title">📞 Contact Information</h3>
+      <div class="reservation-summary__detail">
+        <strong>{{ reservationData.name }}</strong>
+      </div>
+      <div class="reservation-summary__detail">
+        {{ reservationData.email }}
+      </div>
+      <div class="reservation-summary__detail">
+        {{ reservationData.phone }}
+      </div>
+    </div>
+  </div>
+
+  <div class="reservation-summary__notice">
+    <div class="reservation-summary__notice-icon">ℹ️</div>
+    <div class="reservation-summary__notice-content">
+      <p>
+        By confirming this reservation, you agree to arrive within 15 minutes of
+        your reserved time. Late arrivals may result in table reassignment.
+      </p>
+    </div>
+  </div>
+
+  <div class="reservation-summary__actions">
+    <button
+      type="button"
+      class="reservation-summary__btn reservation-summary__btn--secondary"
+      [disabled]="isSubmitting"
+      (click)="onEdit()"
+    >
+      ← Edit Details
+    </button>
+
+    <button
+      type="button"
+      class="reservation-summary__btn reservation-summary__btn--primary"
+      [disabled]="isSubmitting"
+      (click)="onConfirm()"
+    >
+      @if (!isSubmitting) {
+      <span>Confirm Reservation</span>
+      } @else {
+      <span>
+        <app-loading-spinner size="small" color="white"></app-loading-spinner>
+        Creating...
+      </span>
+      }
+    </button>
+  </div>
+</div>

@@ -1,12 +1,69 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { AvailabilityService } from '../../../core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  NgZone,
+  ChangeDetectorRef,
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { LoadingSpinner } from '../loading-spinner/loading-spinner';
+import { AvailabilityService } from '../../../core';
 
 @Component({
   selector: 'app-date-picker',
   standalone: true,
-  imports: [LoadingSpinner],
-  templateUrl: './date-picker.html',
+  imports: [CommonModule, LoadingSpinner],
+  template: `
+    <div class="date-picker">
+      <div class="date-picker__loading" *ngIf="loading">
+        <app-loading-spinner size="small"></app-loading-spinner>
+      </div>
+
+      <div class="date-picker__grid" *ngIf="!loading">
+        <div
+          *ngFor="let date of availableDates; trackBy: trackByDate"
+          class="date-picker__date"
+          [class.date-picker__date--selected]="selectedDate === date"
+          [class.date-picker__date--unavailable]="!dateAvailability[date]"
+          [class.date-picker__date--disabled]="disabled"
+          (click)="onDateSelect(date)"
+        >
+          <div class="date-picker__date-display">
+            {{ formatDateForDisplay(date) }}
+          </div>
+          <div
+            class="date-picker__availability"
+            *ngIf="!dateAvailability[date]"
+          >
+            Fully Booked
+          </div>
+        </div>
+      </div>
+
+      <div class="date-picker__legend" *ngIf="!loading">
+        <div class="date-picker__legend-item">
+          <div
+            class="date-picker__legend-color date-picker__legend-color--available"
+          ></div>
+          <span>Available</span>
+        </div>
+        <div class="date-picker__legend-item">
+          <div
+            class="date-picker__legend-color date-picker__legend-color--unavailable"
+          ></div>
+          <span>Fully Booked</span>
+        </div>
+        <div class="date-picker__legend-item">
+          <div
+            class="date-picker__legend-color date-picker__legend-color--selected"
+          ></div>
+          <span>Selected</span>
+        </div>
+      </div>
+    </div>
+  `,
   styleUrl: './date-picker.scss',
 })
 export class DatePicker implements OnInit {
@@ -28,10 +85,14 @@ export class DatePicker implements OnInit {
   dateAvailability: { [key: string]: boolean } = {};
   loading = false;
 
-  constructor(private availabilityService: AvailabilityService) {}
+  constructor(
+    private availabilityService: AvailabilityService,
+    private ngZone: NgZone,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
-    this.checkDateAvailability();
+    this.loadDateAvailability();
   }
 
   onDateSelect(date: string): void {
@@ -53,23 +114,33 @@ export class DatePicker implements OnInit {
     return date.toLocaleDateString('en-US', options);
   }
 
-  private checkDateAvailability(): void {
+  trackByDate(index: number, date: string): string {
+    return date;
+  }
+
+  private loadDateAvailability(): void {
     this.loading = true;
 
-    this.availableDates.forEach((date) => {
-      this.availabilityService.getAvailableTimeSlots(date).subscribe({
-        next: (timeSlots) => {
-          this.dateAvailability[date] = timeSlots.some(
-            (slot) => slot.available
-          );
-          this.loading = false;
+    this.availabilityService
+      .getMultipleDateAvailability(this.availableDates)
+      .subscribe({
+        next: (availability) => {
+          this.ngZone.run(() => {
+            this.dateAvailability = availability;
+            this.loading = false;
+            this.cdr.detectChanges();
+          });
         },
         error: (error) => {
-          console.error('Error checking date availability:', error);
-          this.dateAvailability[date] = false;
-          this.loading = false;
+          console.error('Error loading date availability:', error);
+          this.ngZone.run(() => {
+            this.availableDates.forEach((date) => {
+              this.dateAvailability[date] = true;
+            });
+            this.loading = false;
+            this.cdr.detectChanges();
+          });
         },
       });
-    });
   }
 }

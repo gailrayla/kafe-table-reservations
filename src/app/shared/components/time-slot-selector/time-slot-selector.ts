@@ -6,14 +6,85 @@ import {
   OnInit,
   Output,
   SimpleChanges,
+  NgZone,
+  ChangeDetectorRef,
 } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { TimeSlot, AvailabilityService } from '../../../core';
 import { LoadingSpinner } from '../loading-spinner/loading-spinner';
 
 @Component({
   selector: 'app-time-slot-selector',
-  imports: [LoadingSpinner],
-  templateUrl: './time-slot-selector.html',
+  standalone: true,
+  imports: [CommonModule, LoadingSpinner],
+  template: `
+    <div class="time-slot-selector">
+      <div class="time-slot-selector__header" *ngIf="selectedDate">
+        <h3>Available Times for {{ formatDateForDisplay(selectedDate) }}</h3>
+      </div>
+
+      <div class="time-slot-selector__loading" *ngIf="loading">
+        <app-loading-spinner
+          size="small"
+          message="Checking availability..."
+        ></app-loading-spinner>
+      </div>
+
+      <div
+        class="time-slot-selector__grid"
+        *ngIf="!loading && timeSlots.length > 0"
+      >
+        <div
+          *ngFor="let slot of timeSlots; trackBy: trackBySlot"
+          class="time-slot-selector__slot"
+          [class.time-slot-selector__slot--selected]="
+            selectedTimeSlot === slot.time
+          "
+          [class.time-slot-selector__slot--unavailable]="!slot.available"
+          [class.time-slot-selector__slot--disabled]="disabled"
+          (click)="onTimeSlotSelect(slot.time)"
+        >
+          <div class="time-slot-selector__time">
+            {{ formatTimeForDisplay(slot.time) }}
+          </div>
+          <div class="time-slot-selector__status" *ngIf="!slot.available">
+            Fully Booked
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="time-slot-selector__empty"
+        *ngIf="!loading && timeSlots.length === 0"
+      >
+        <p>No time slots available for the selected date.</p>
+      </div>
+
+      <div
+        class="time-slot-selector__legend"
+        *ngIf="!loading && timeSlots.length > 0"
+      >
+        <div class="time-slot-selector__legend-item">
+          <div
+            class="time-slot-selector__legend-color time-slot-selector__legend-color--available"
+          ></div>
+          <span>Available</span>
+        </div>
+        <div class="time-slot-selector__legend-item">
+          <div
+            class="time-slot-selector__legend-color time-slot-selector__legend-color--unavailable"
+          ></div>
+          <span>Fully Booked</span>
+        </div>
+        <div class="time-slot-selector__legend-item">
+          <div
+            class="time-slot-selector__legend-color time-slot-selector__legend-color--selected"
+          ></div>
+          <span>Selected</span>
+        </div>
+      </div>
+    </div>
+  `,
   styleUrl: './time-slot-selector.scss',
 })
 export class TimeSlotSelector implements OnInit, OnChanges {
@@ -25,7 +96,11 @@ export class TimeSlotSelector implements OnInit, OnChanges {
   timeSlots: TimeSlot[] = [];
   loading = false;
 
-  constructor(private availabilityService: AvailabilityService) {}
+  constructor(
+    private availabilityService: AvailabilityService,
+    private ngZone: NgZone,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     if (this.selectedDate) {
@@ -78,21 +153,32 @@ export class TimeSlotSelector implements OnInit, OnChanges {
     return date.toLocaleDateString('en-US', options);
   }
 
+  trackBySlot(index: number, slot: TimeSlot): string {
+    return slot.id;
+  }
+
   private loadTimeSlots(): void {
     if (!this.selectedDate) return;
 
     this.loading = true;
+
     this.availabilityService
       .getAvailableTimeSlots(this.selectedDate)
       .subscribe({
         next: (slots) => {
-          this.timeSlots = slots;
-          this.loading = false;
+          this.ngZone.run(() => {
+            this.timeSlots = slots;
+            this.loading = false;
+            this.cdr.detectChanges();
+          });
         },
         error: (error) => {
           console.error('Error loading time slots:', error);
-          this.loading = false;
-          this.timeSlots = [];
+          this.ngZone.run(() => {
+            this.timeSlots = [];
+            this.loading = false;
+            this.cdr.detectChanges();
+          });
         },
       });
   }

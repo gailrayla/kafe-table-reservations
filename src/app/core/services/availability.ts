@@ -84,20 +84,13 @@ export class AvailabilityService {
           if (partySize > region.maxSize) {
             return false;
           }
-
           if (hasChildren && !region.childrenAllowed) {
             return false;
           }
-
           if (needsSmoking && !region.smokingAllowed) {
             return false;
           }
-
-          const isBooked = existingReservations.some(
-            (reservation) => reservation.reservation.regionId === region.id
-          );
-
-          return !isBooked;
+          return true;
         });
       })
     );
@@ -108,11 +101,13 @@ export class AvailabilityService {
       delay(200),
       map((allReservations) => {
         return TIME_SLOTS.map((time) => {
-          const bookedRegions = allReservations.filter(
+          const reservationsForSlot = allReservations.filter(
             (reservation) =>
               reservation.reservation.date === date &&
               reservation.reservation.timeSlot === time
-          ).length;
+          );
+
+          const bookedRegions = reservationsForSlot.length;
 
           const available = bookedRegions < REGIONS.length;
 
@@ -122,6 +117,50 @@ export class AvailabilityService {
             id: `${date}-${time}`,
           };
         });
+      })
+    );
+  }
+
+  getDateAvailability(date: string): Observable<boolean> {
+    return this.reservationService.getAllReservations().pipe(
+      delay(200),
+      map((allReservations) => {
+        const reservationsForDate = allReservations.filter(
+          (reservation) => reservation.reservation.date === date
+        );
+        const totalPossibleSlots = REGIONS.length * TIME_SLOTS.length;
+        return reservationsForDate.length < totalPossibleSlots;
+      })
+    );
+  }
+
+  getMultipleDateAvailability(
+    dates: string[]
+  ): Observable<{ [key: string]: boolean }> {
+    return this.reservationService.getAllReservations().pipe(
+      delay(200),
+      map((allReservations) => {
+        const availability: { [key: string]: boolean } = {};
+
+        dates.forEach((date) => {
+          const reservationsForDate = allReservations.filter(
+            (reservation) => reservation.reservation.date === date
+          );
+
+          const totalPossibleSlots = REGIONS.length * TIME_SLOTS.length;
+          availability[date] = reservationsForDate.length < totalPossibleSlots;
+        });
+
+        return availability;
+      })
+    );
+  }
+
+  getBookedRegions(date: string, timeSlot: string): Observable<string[]> {
+    return this.reservationService.getReservationsForSlot(date, timeSlot).pipe(
+      map((reservations) => {
+        const bookedRegions = reservations.map((r) => r.reservation.regionId);
+        return bookedRegions;
       })
     );
   }
