@@ -1,0 +1,159 @@
+.date-picker {
+  &__header {
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  &__title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 0.5rem 0;
+  }
+
+  &__subtitle {
+    font-size: 0.875rem;
+    color: #666;
+    margin: 0;
+  }
+
+  &__loading {
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  &__date {
+    background: #fff;
+    border: 2px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.25rem;
+
+    &:hover:not(:disabled) {
+      border-color: #d1d5db;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    &--selected {
+      background: #3b82f6;
+      border-color: #3b82f6;
+      color: #fff;
+
+      .date-picker__availability-indicator {
+        color: #fff;
+      }
+    }
+
+    &--available {
+      border-color: #10b981;
+
+      &:hover:not(:disabled) {
+        border-color: #059669;
+        background: #f0fdf4;
+      }
+    }
+
+    &--unavailable {
+      background: #f9fafb;
+      border-color: #d1d5db;
+      color: #6b7280;
+      cursor: not-allowed;
+
+      &:hover {
+        transform: none;
+        box-shadow: none;
+      }
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  &__date-text {
+    font-weight: 500;
+    font-size: 0.875rem;
+  }
+
+  &__availability-indicator {
+    font-size: 0.75rem;
+    font-weight: 500;
+
+    &--available {
+      color: #10b981;
+    }
+
+    &--unavailable {
+      color: #ef4444;
+    }
+  }
+
+  &__legend {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 6px;
+  }
+
+  &__legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #64748b;
+  }
+
+  &__legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+
+    &--available {
+      background: #10b981;
+    }
+
+    &--unavailable {
+      background: #ef4444;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .date-picker {
+    &__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    &__legend {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+  }
+}
