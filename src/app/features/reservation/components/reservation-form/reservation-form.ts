@@ -229,7 +229,12 @@ export class ReservationForm implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe((formValue) => {
-        if (formValue.date && formValue.timeSlot && formValue.regionId) {
+        if (
+          formValue.date &&
+          formValue.timeSlot &&
+          formValue.regionId &&
+          this.currentStep < 4
+        ) {
           this.checkAvailability(formValue);
         }
       });

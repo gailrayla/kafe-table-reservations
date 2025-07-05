@@ -1,7 +1,8 @@
 .reservation-form {
   max-width: 800px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: var(--spacing-xl);
+  font-family: var(--font-family-primary);
 
   &--submitting {
     opacity: 0.8;
@@ -9,21 +10,26 @@
   }
 
   &__progress {
-    margin-bottom: 3rem;
+    margin-bottom: var(--spacing-2xl);
   }
 
   &__progress-bar {
     width: 100%;
     height: 4px;
-    background: #e5e7eb;
-    border-radius: 2px;
+    background: hsla(var(--gray-hsl), 0.2);
+    border-radius: var(--radius-sm);
     overflow: hidden;
-    margin-bottom: 1rem;
+    margin-bottom: var(--spacing-md);
   }
 
   &__progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    background: linear-gradient(
+      90deg,
+      var(--primary-color),
+      var(--primary-medium)
+    );
+    border-radius: var(--radius-sm);
     transition: width 0.3s ease;
   }
 
@@ -39,33 +45,31 @@
     align-items: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    padding: 0.5rem;
-    border-radius: 8px;
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-md);
 
     &:hover {
-      background: #f8fafc;
+      background: var(--primary-light);
     }
 
     &--active {
-      color: #3b82f6;
+      color: var(--primary-color);
 
       .reservation-form__step-number {
-        background: #3b82f6;
-        color: white;
+        background: var(--primary-color);
+        color: var(--light-color);
         transform: scale(1.1);
+        box-shadow: var(--shadow-md);
       }
     }
 
     &--completed {
-      color: #10b981;
+      color: var(--success-color);
 
       .reservation-form__step-number {
-        background: #10b981;
-        color: white;
-
-        &::after {
-          content: "✓";
-        }
+        background: var(--success-color);
+        color: var(--light-color);
+        box-shadow: var(--shadow-md);
       }
     }
   }
@@ -74,22 +78,22 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: #e5e7eb;
-    color: #6b7280;
+    background: hsla(var(--gray-hsl), 0.2);
+    color: hsla(var(--gray-hsl), 0.8);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     font-size: 0.875rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--spacing-sm);
     transition: all 0.2s ease;
   }
 
   &__step-label {
     font-size: 0.75rem;
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     text-align: center;
-    color: #6b7280;
+    color: hsla(var(--gray-hsl), 0.8);
   }
 
   &__form {
@@ -102,90 +106,95 @@
 
   &__step-header {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: var(--spacing-xl);
   }
 
   &__step-title {
     font-size: 1.5rem;
-    font-weight: 600;
-    color: #1f2937;
-    margin: 0 0 0.5rem 0;
+    font-weight: var(--font-weight-semibold);
+    color: var(--dark-color);
+    margin: 0 0 var(--spacing-sm) 0;
   }
 
   &__step-subtitle {
     font-size: 1rem;
-    color: #6b7280;
+    color: hsla(var(--gray-hsl), 0.8);
     margin: 0;
   }
 
   &__step-content {
-    margin-bottom: 2rem;
+    margin-bottom: var(--spacing-xl);
   }
 
   // Party Size Controls
   &__party-size {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: var(--spacing-xl);
   }
 
   &__label {
     display: block;
     font-size: 1rem;
-    font-weight: 500;
-    color: #374151;
-    margin-bottom: 1rem;
+    font-weight: var(--font-weight-medium);
+    color: var(--dark-color);
+    margin-bottom: var(--spacing-md);
   }
 
   &__party-size-controls {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
-    margin-bottom: 0.5rem;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
   }
 
   &__party-size-btn {
     width: 40px;
     height: 40px;
-    border: 2px solid #d1d5db;
-    border-radius: 8px;
-    background: white;
-    color: #374151;
+    border: 2px solid var(--primary-color);
+    border-radius: var(--radius-md);
+    background: var(--light-color);
+    color: var(--primary-color);
     font-size: 1.25rem;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     cursor: pointer;
     transition: all 0.2s ease;
+    font-family: var(--font-family-primary);
 
-    &:hover:not(:disabled) {
-      border-color: #3b82f6;
-      background: #f8fafc;
+    &:hover:not(.disabled) {
+      background-color: var(--primary-light);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
     }
 
-    &:disabled {
-      opacity: 0.5;
+    &.disabled {
+      background-color: hsla(var(--gray-hsl), 0.1);
+      color: hsla(var(--gray-hsl), 0.5);
+      border-color: hsla(var(--gray-hsl), 0.3);
       cursor: not-allowed;
+      opacity: 0.6;
+      transform: none;
     }
   }
 
   &__party-size-display {
     font-size: 1.5rem;
-    font-weight: 600;
-    color: #1f2937;
+    font-weight: var(--font-weight-semibold);
+    color: var(--dark-color);
     min-width: 60px;
     text-align: center;
   }
 
   &__party-size-note {
     font-size: 0.875rem;
-    color: #6b7280;
+    color: hsla(var(--gray-hsl), 0.8);
     margin: 0;
   }
 
-  // Preferences
   &__preferences {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: var(--spacing-md);
     max-width: 400px;
     margin: 0 auto;
   }
@@ -198,116 +207,129 @@
   &__checkbox-label {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: var(--spacing-sm);
     cursor: pointer;
-    padding: 0.75rem;
-    border: 2px solid #e5e7eb;
-    border-radius: 8px;
+    padding: var(--spacing-sm);
+    border: 2px solid hsla(var(--gray-hsl), 0.2);
+    border-radius: var(--radius-md);
     transition: all 0.2s ease;
     width: 100%;
 
     &:hover {
-      border-color: #d1d5db;
-      background: #f8fafc;
+      border-color: var(--primary-color);
+      background: var(--primary-light);
     }
   }
 
   &__checkbox {
     width: 18px;
     height: 18px;
-    accent-color: #3b82f6;
+    accent-color: var(--primary-color);
   }
 
   &__checkbox-text {
     font-size: 0.875rem;
-    color: #374151;
-    font-weight: 500;
+    color: var(--dark-color);
+    font-weight: var(--font-weight-medium);
   }
 
-  // Form Fields
   &__form-fields {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: var(--spacing-lg);
     max-width: 500px;
     margin: 0 auto;
   }
 
-  // Availability Status
   &__availability {
-    margin: 1.5rem 0;
-    padding: 1rem;
-    border-radius: 8px;
+    margin: var(--spacing-lg) 0;
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
     text-align: center;
   }
 
   &__availability-checking {
-    background: #f0f9ff;
-    border: 1px solid #bfdbfe;
-    color: #1e40af;
+    background: var(--primary-light);
+    border: 1px solid var(--primary-medium);
+    color: var(--primary-color);
   }
 
   &__availability-error {
-    background: #fef2f2;
-    border: 1px solid #fecaca;
-    color: #dc2626;
-    font-weight: 500;
+    background: hsla(var(--error-hsl), 0.1);
+    border: 1px solid hsla(var(--error-hsl), 0.3);
+    color: var(--error-color);
+    font-weight: var(--font-weight-medium);
   }
 
-  // Navigation
   &__navigation {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 1px solid #e5e7eb;
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-xl);
+    border-top: 1px solid hsla(var(--gray-hsl), 0.2);
   }
 
   &__nav-btn {
-    padding: 0.75rem 2rem;
-    border-radius: 8px;
+    font-family: var(--font-family-primary);
+    font-weight: var(--font-weight-medium);
+    padding: var(--spacing-sm) var(--spacing-xl);
+    border-radius: var(--radius-md);
     font-size: 1rem;
-    font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
     border: 2px solid transparent;
     min-width: 120px;
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+    box-shadow: var(--shadow-sm);
 
     &--primary {
-      background: #3b82f6;
-      color: white;
-      border-color: #3b82f6;
+      background: var(--primary-color);
+      color: var(--light-color);
+      border-color: var(--primary-color);
 
-      &:hover:not(:disabled) {
-        background: #2563eb;
-        border-color: #2563eb;
+      &:hover:not(.disabled) {
+        background: var(--primary-medium);
+        border-color: var(--primary-medium);
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        box-shadow: var(--shadow-md);
+      }
+
+      &.disabled {
+        background: hsla(var(--gray-hsl), 0.4);
+        color: hsla(var(--gray-hsl), 0.8);
+        border-color: hsla(var(--gray-hsl), 0.4);
+        cursor: not-allowed;
+        opacity: 0.6;
+        transform: none;
+        box-shadow: none;
       }
     }
 
     &--secondary {
-      background: white;
-      color: #6b7280;
-      border-color: #d1d5db;
+      background: var(--light-color);
+      color: hsla(var(--gray-hsl), 0.8);
+      border-color: hsla(var(--gray-hsl), 0.3);
 
-      &:hover:not(:disabled) {
-        background: #f8fafc;
-        border-color: #9ca3af;
-        color: #374151;
+      &:hover:not(.disabled) {
+        background: var(--primary-light);
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        transform: translateY(-1px);
+      }
+
+      &.disabled {
+        background: hsla(var(--gray-hsl), 0.1);
+        color: hsla(var(--gray-hsl), 0.5);
+        border-color: hsla(var(--gray-hsl), 0.2);
+        cursor: not-allowed;
+        opacity: 0.6;
+        transform: none;
       }
     }
   }
 
-  // Summary
   &__summary {
-    margin-top: 2rem;
+    margin-top: var(--spacing-xl);
   }
 }
 
@@ -322,14 +344,13 @@
   }
 }
 
-// Responsive design
 @media (max-width: 768px) {
   .reservation-form {
-    padding: 1rem;
+    padding: var(--spacing-md);
 
     &__step-indicators {
       flex-wrap: wrap;
-      gap: 0.5rem;
+      gap: var(--spacing-sm);
     }
 
     &__step-indicator {
@@ -344,7 +365,7 @@
     }
 
     &__step-label {
-      font-size: 0.6875rem;
+      font-size: 0.625rem;
     }
 
     &__step-title {
@@ -352,7 +373,7 @@
     }
 
     &__party-size-controls {
-      gap: 0.75rem;
+      gap: var(--spacing-sm);
     }
 
     &__party-size-btn {
@@ -370,7 +391,7 @@
 
     &__navigation {
       flex-direction: column;
-      gap: 1rem;
+      gap: var(--spacing-md);
     }
 
     &__nav-btn {

@@ -1,18 +1,25 @@
 <div class="reservation-confirmation">
   <div class="reservation-confirmation__container">
-    <div class="reservation-confirmation__loading" *ngIf="loading">
+    <!-- Loading State -->
+    <div class="reservation-confirmation__loading" *ngIf="loading$ | async">
       <app-loading-spinner
         size="large"
         message="Loading your reservation..."
       ></app-loading-spinner>
     </div>
 
-    <div class="reservation-confirmation__error" *ngIf="error && !loading">
+    <!-- Error State -->
+    <div
+      class="reservation-confirmation__error"
+      *ngIf="(error$ | async) && !(loading$ | async)"
+    >
       <div class="reservation-confirmation__error-icon">❌</div>
       <h2 class="reservation-confirmation__error-title">
         Reservation Not Found
       </h2>
-      <p class="reservation-confirmation__error-message">{{ error }}</p>
+      <p class="reservation-confirmation__error-message">
+        {{ error$ | async }}
+      </p>
       <button
         class="reservation-confirmation__btn reservation-confirmation__btn--primary"
         (click)="makeNewReservation()"
@@ -23,92 +30,98 @@
 
     <div
       class="reservation-confirmation__success"
-      *ngIf="reservation && !loading"
+      *ngIf="(reservation$ | async) && !(loading$ | async)"
     >
-      <div class="reservation-confirmation__success-icon">✅</div>
-
       <h1 class="reservation-confirmation__title">Reservation Confirmed!</h1>
       <p class="reservation-confirmation__subtitle">
         Your table has been reserved. We're excited to welcome you to Kafè!
       </p>
 
       <div class="reservation-confirmation__card">
-        <div class="reservation-confirmation__confirmation-number">
-          <div class="reservation-confirmation__label">Confirmation Number</div>
-          <div
-            class="reservation-confirmation__value reservation-confirmation__value--highlight"
-          >
-            {{ reservation.confirmationNumber }}
-          </div>
-        </div>
-
-        <div class="reservation-confirmation__details">
-          <div class="reservation-confirmation__detail-section">
-            <h3 class="reservation-confirmation__section-title">
-              📅 Date & Time
-            </h3>
-            <div class="reservation-confirmation__detail">
-              <strong>{{ formatDate(reservation.reservation.date) }}</strong>
-            </div>
-            <div class="reservation-confirmation__detail">
-              {{ formatTime(reservation.reservation.timeSlot) }}
-            </div>
-          </div>
-
-          <div class="reservation-confirmation__detail-section">
-            <h3 class="reservation-confirmation__section-title">
-              👥 Party Details
-            </h3>
-            <div class="reservation-confirmation__detail">
-              {{ reservation.reservation.partySize }}
-              {{ reservation.reservation.partySize === 1 ? "guest" : "guests" }}
+        <ng-container *ngIf="reservation$ | async as reservation">
+          <div class="reservation-confirmation__confirmation-number">
+            <div class="reservation-confirmation__label">
+              Confirmation Number
             </div>
             <div
-              class="reservation-confirmation__preferences"
-              *ngIf="
-                reservation.reservation.hasChildren ||
-                reservation.reservation.needsSmoking
-              "
+              class="reservation-confirmation__value reservation-confirmation__value--highlight"
             >
-              <span
-                class="reservation-confirmation__preference-tag"
-                *ngIf="reservation.reservation.hasChildren"
-              >
-                👶 Children included
-              </span>
-              <span
-                class="reservation-confirmation__preference-tag"
-                *ngIf="reservation.reservation.needsSmoking"
-              >
-                🚬 Smoking section
-              </span>
+              {{ reservation.confirmationNumber }}
             </div>
           </div>
 
-          <div class="reservation-confirmation__detail-section">
-            <h3 class="reservation-confirmation__section-title">
-              🏛️ Dining Area
-            </h3>
-            <div class="reservation-confirmation__detail">
-              <strong>{{
-                getRegionName(reservation.reservation.regionId)
-              }}</strong>
+          <div class="reservation-confirmation__details">
+            <div class="reservation-confirmation__detail-section">
+              <h3 class="reservation-confirmation__section-title">
+                📅 Date & Time
+              </h3>
+              <div class="reservation-confirmation__detail">
+                <strong>{{ formatDate(reservation.reservation.date) }}</strong>
+              </div>
+              <div class="reservation-confirmation__detail">
+                {{ formatTime(reservation.reservation.timeSlot) }}
+              </div>
             </div>
-          </div>
 
-          <div class="reservation-confirmation__detail-section">
-            <h3 class="reservation-confirmation__section-title">📞 Contact</h3>
-            <div class="reservation-confirmation__detail">
-              {{ reservation.reservation.customerInfo.name }}
+            <div class="reservation-confirmation__detail-section">
+              <h3 class="reservation-confirmation__section-title">
+                👥 Party Details
+              </h3>
+              <div class="reservation-confirmation__detail">
+                {{ reservation.reservation.partySize }}
+                {{
+                  reservation.reservation.partySize === 1 ? "guest" : "guests"
+                }}
+              </div>
+              <div
+                class="reservation-confirmation__preferences"
+                *ngIf="
+                  reservation.reservation.hasChildren ||
+                  reservation.reservation.needsSmoking
+                "
+              >
+                <span
+                  class="reservation-confirmation__preference-tag"
+                  *ngIf="reservation.reservation.hasChildren"
+                >
+                  👶 Children included
+                </span>
+                <span
+                  class="reservation-confirmation__preference-tag"
+                  *ngIf="reservation.reservation.needsSmoking"
+                >
+                  🚬 Smoking section
+                </span>
+              </div>
             </div>
-            <div class="reservation-confirmation__detail">
-              {{ reservation.reservation.customerInfo.email }}
+
+            <div class="reservation-confirmation__detail-section">
+              <h3 class="reservation-confirmation__section-title">
+                🏛️ Dining Area
+              </h3>
+              <div class="reservation-confirmation__detail">
+                <strong>{{
+                  getRegionName(reservation.reservation.regionId)
+                }}</strong>
+              </div>
             </div>
-            <div class="reservation-confirmation__detail">
-              {{ reservation.reservation.customerInfo.phone }}
+
+            <div class="reservation-confirmation__detail-section">
+              <h3 class="reservation-confirmation__section-title">
+                📞 Contact
+              </h3>
+              <div class="reservation-confirmation__detail">
+                {{ reservation.reservation.customerInfo.name }}
+              </div>
+              <div class="reservation-confirmation__detail">
+                {{ reservation.reservation.customerInfo.email }}
+              </div>
+              <div class="reservation-confirmation__detail">
+                {{ reservation.reservation.customerInfo.phone }}
+              </div>
             </div>
           </div>
-        </div>
+        </ng-container>
       </div>
 
       <div class="reservation-confirmation__important-info">
@@ -119,7 +132,7 @@
           <li>Please arrive within 15 minutes of your reservation time</li>
           <li>Late arrivals may result in table reassignment</li>
           <li>
-            For changes or cancellations, please call us at (555) 123-4567
+            For changes or cancellations, please call us at (444) 777-5557
           </li>
           <li>We look forward to serving you at Kafè!</li>
         </ul>
