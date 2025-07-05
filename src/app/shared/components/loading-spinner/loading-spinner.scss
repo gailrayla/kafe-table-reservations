@@ -3,7 +3,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: var(--spacing-md);
+  font-family: var(--font-family-primary);
 
   &__spinner {
     display: inline-block;
@@ -18,7 +19,7 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #3b82f6;
+    background: var(--primary-color);
     animation: loading-spinner-bounce 1.2s infinite ease-in-out both;
 
     &:nth-child(1) {
@@ -44,13 +45,16 @@
 
   &__message {
     font-size: 0.875rem;
-    color: #6b7280;
+    color: hsla(var(--gray-hsl), 0.8);
     text-align: center;
     margin: 0;
+    font-weight: var(--font-weight-medium);
   }
 
   // Size variants
   &--small {
+    gap: var(--spacing-sm);
+
     .loading-spinner__spinner {
       width: 24px;
       height: 24px;
@@ -81,6 +85,8 @@
   }
 
   &--large {
+    gap: var(--spacing-lg);
+
     .loading-spinner__spinner {
       width: 60px;
       height: 60px;
@@ -110,17 +116,24 @@
     }
   }
 
-  // Color variants
   &__spinner--primary .loading-spinner__dot {
-    background: #3b82f6;
+    background: var(--primary-color);
   }
 
   &__spinner--secondary .loading-spinner__dot {
-    background: #6b7280;
+    background: hsla(var(--gray-hsl), 0.6);
   }
 
   &__spinner--white .loading-spinner__dot {
-    background: #ffffff;
+    background: var(--light-color);
+  }
+
+  &__spinner--success .loading-spinner__dot {
+    background: var(--success-color);
+  }
+
+  &__spinner--error .loading-spinner__dot {
+    background: var(--error-color);
   }
 }
 
