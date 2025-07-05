@@ -1,164 +1,126 @@
 .time-slot-selector {
   &__header {
-    margin-bottom: 1.5rem;
-    text-align: center;
-  }
+    margin-bottom: 16px;
 
-  &__title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1a1a1a;
-    margin: 0 0 0.5rem 0;
-  }
-
-  &__subtitle {
-    font-size: 0.875rem;
-    color: #666;
-    margin: 0;
+    h3 {
+      margin: 0;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #1f2937;
+    }
   }
 
   &__loading {
     display: flex;
     justify-content: center;
-    padding: 2rem;
-  }
-
-  &__message {
-    text-align: center;
-    padding: 2rem;
-    background: #f8fafc;
-    border-radius: 8px;
-    border: 2px dashed #cbd5e1;
-  }
-
-  &__message-text {
-    font-size: 1rem;
-    color: #64748b;
-    margin: 0;
+    padding: 20px;
   }
 
   &__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 0.75rem;
-    margin-bottom: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
   }
 
   &__slot {
-    background: #fff;
-    border: 2px solid #e5e5e5;
+    padding: 12px 8px;
+    border: 2px solid #e5e7eb;
     border-radius: 8px;
-    padding: 0.75rem;
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: center;
-    min-height: 70px;
+    background-color: #ffffff;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 0.25rem;
+    min-height: 70px;
 
-    &:hover:not(:disabled) {
-      border-color: #d1d5db;
-      transform: translateY(-1px);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    &:focus {
-      outline: none;
+    &:hover:not(&--unavailable):not(&--disabled) {
       border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      background-color: #f0f9ff;
     }
 
     &--selected {
-      background: #3b82f6;
       border-color: #3b82f6;
-      color: #fff;
-
-      .time-slot-selector__slot-status {
-        color: #fff;
-      }
-    }
-
-    &--available {
-      border-color: #10b981;
-
-      &:hover:not(:disabled) {
-        border-color: #059669;
-        background: #f0fdf4;
-      }
+      background-color: #3b82f6;
+      color: white;
     }
 
     &--unavailable {
-      background: #f9fafb;
-      border-color: #d1d5db;
-      color: #6b7280;
+      border-color: #ef4444;
+      background-color: #fef2f2;
+      color: #991b1b;
       cursor: not-allowed;
-
-      &:hover {
-        transform: none;
-        box-shadow: none;
-      }
+      opacity: 0.7;
     }
 
-    &:disabled {
-      opacity: 0.6;
+    &--disabled {
+      opacity: 0.5;
       cursor: not-allowed;
     }
   }
 
-  &__slot-time {
-    font-weight: 600;
-    font-size: 0.875rem;
-  }
-
-  &__slot-status {
-    font-size: 0.75rem;
+  &__time {
     font-weight: 500;
+    font-size: 0.875rem;
+    margin-bottom: 4px;
+  }
 
-    .time-slot-selector__slot--available & {
-      color: #10b981;
-    }
-
-    .time-slot-selector__slot--unavailable & {
-      color: #ef4444;
-    }
+  &__status {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
   &__empty {
     text-align: center;
-    padding: 2rem;
-    background: #fef2f2;
+    padding: 40px 20px;
+    color: #6b7280;
+
+    p {
+      margin: 0;
+      font-style: italic;
+    }
+  }
+
+  &__legend {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    padding: 12px;
+    background-color: #f9fafb;
     border-radius: 8px;
-    border: 1px solid #fecaca;
+    font-size: 0.875rem;
   }
 
-  &__empty-text {
-    font-size: 1rem;
-    color: #dc2626;
-    margin: 0;
+  &__legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
-}
 
-// Responsive design
-@media (max-width: 768px) {
-  .time-slot-selector {
-    &__grid {
-      grid-template-columns: repeat(3, 1fr);
+  &__legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 2px solid;
+
+    &--available {
+      background-color: #ffffff;
+      border-color: #e5e7eb;
     }
 
-    &__slot {
-      min-height: 60px;
-      padding: 0.5rem;
+    &--unavailable {
+      background-color: #fef2f2;
+      border-color: #ef4444;
     }
-  }
-}
 
-@media (max-width: 480px) {
-  .time-slot-selector {
-    &__grid {
-      grid-template-columns: repeat(2, 1fr);
+    &--selected {
+      background-color: #3b82f6;
+      border-color: #3b82f6;
     }
   }
 }

@@ -18,10 +18,6 @@
     font-size: 0.875rem;
   }
 
-  &__input-container {
-    position: relative;
-  }
-
   &__input {
     width: 100%;
     padding: 0.75rem 1rem;
@@ -102,7 +98,6 @@
   }
 }
 
-// Responsive design
 @media (max-width: 768px) {
   .form-field {
     &__input {
