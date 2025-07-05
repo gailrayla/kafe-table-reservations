@@ -18,21 +18,7 @@ A single-page application for online table reservations at Kafè restaurant. Bui
 | Riverside | 8 | ✅ | ❌ |
 | Riverside (Smoking) | 6 | ❌ | ✅ |
 
-## 🚀 Features
-
-- **Smart Availability**: Real-time checking with conflict resolution
-- **Intelligent Filtering**: Automatically filters regions based on party requirements
-- **Form Validation**: Comprehensive validation with helpful error messages
-- **Responsive Design**: Works seamlessly on desktop and mobile
-
-## 🛠️ Tech Stack
-
-- Angular 20.0.5 + TypeScript
-- SCSS styling
-- Karma + Jasmine testing
-- Feature-based architecture
-
-## 📁 Project Structure
+## Project Structure
 
 ### Core Services
 
@@ -61,7 +47,7 @@ A single-page application for online table reservations at Kafè restaurant. Bui
 - **`reservation-summary`** - Booking details review
 - **`reservation-confirmation`** - Final confirmation with booking details
 
-## 🔧 How It Works
+## How It Works
 
 1. **Selection Phase**: User picks date, time, party size
 2. **Smart Filtering**: System automatically filters available regions based on party requirements (children/smoking)
@@ -70,7 +56,7 @@ A single-page application for online table reservations at Kafè restaurant. Bui
 5. **Information Collection**: Gathers contact details and special requirements
 6. **Confirmation**: Creates reservation with unique booking reference
 
-## 🔧 Setup
+## Setup
 
 ```bash
 # Clone and install
