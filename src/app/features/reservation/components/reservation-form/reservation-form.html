@@ -1,0 +1,244 @@
+<div
+  class="reservation-form"
+  [class.reservation-form--submitting]="isSubmitting"
+>
+  <div class="reservation-form__progress">
+    <div class="reservation-form__progress-bar">
+      <div
+        class="reservation-form__progress-fill"
+        [style.width.%]="(currentStep / totalSteps) * 100"
+      ></div>
+    </div>
+    <div class="reservation-form__step-indicators">
+      <div
+        *ngFor="let step of [1, 2, 3, 4]; let i = index"
+        class="reservation-form__step-indicator"
+        [class.reservation-form__step-indicator--active]="currentStep === step"
+        [class.reservation-form__step-indicator--completed]="currentStep > step"
+        (click)="goToStep(step)"
+      >
+        <span class="reservation-form__step-number">{{ step }}</span>
+        <span class="reservation-form__step-label">
+          {{ getStepLabel(step) }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <form
+    [formGroup]="reservationForm"
+    (ngSubmit)="onSubmit()"
+    class="reservation-form__form"
+  >
+    <div class="reservation-form__step" *ngIf="currentStep === 1">
+      <div class="reservation-form__step-header">
+        <h2 class="reservation-form__step-title">
+          When would you like to dine?
+        </h2>
+        <p class="reservation-form__step-subtitle">
+          Select your preferred date and time
+        </p>
+      </div>
+
+      <div class="reservation-form__step-content">
+        <app-date-picker
+          [selectedDate]="formData.date"
+          [disabled]="isSubmitting"
+          (dateSelected)="onDateSelected($event)"
+        ></app-date-picker>
+
+        <app-time-slot-selector
+          [selectedDate]="formData.date"
+          [selectedTimeSlot]="formData.timeSlot"
+          [disabled]="isSubmitting"
+          (timeSlotSelected)="onTimeSlotSelected($event)"
+        ></app-time-slot-selector>
+      </div>
+    </div>
+
+    <div class="reservation-form__step" *ngIf="currentStep === 2">
+      <div class="reservation-form__step-header">
+        <h2 class="reservation-form__step-title">Tell us about your party</h2>
+        <p class="reservation-form__step-subtitle">
+          Help us prepare the perfect table for you
+        </p>
+      </div>
+
+      <div class="reservation-form__step-content">
+        <div class="reservation-form__party-size">
+          <label class="reservation-form__label">Party Size</label>
+          <div class="reservation-form__party-size-controls">
+            <button
+              type="button"
+              class="reservation-form__party-size-btn"
+              [class.disabled]="formData.partySize <= 1 || isSubmitting"
+              (click)="decreasePartySize()"
+            >
+              -
+            </button>
+            <span class="reservation-form__party-size-display">{{
+              formData.partySize
+            }}</span>
+            <button
+              type="button"
+              class="reservation-form__party-size-btn"
+              [class.disabled]="formData.partySize >= 12 || isSubmitting"
+              (click)="increasePartySize()"
+            >
+              +
+            </button>
+          </div>
+          <p class="reservation-form__party-size-note">
+            Maximum 12 guests per reservation
+          </p>
+        </div>
+
+        <div class="reservation-form__preferences">
+          <div class="reservation-form__preference">
+            <label class="reservation-form__checkbox-label">
+              <input
+                type="checkbox"
+                formControlName="hasChildren"
+                class="reservation-form__checkbox"
+              />
+              <span class="reservation-form__checkbox-text">
+                Children in party
+              </span>
+            </label>
+          </div>
+
+          <div class="reservation-form__preference">
+            <label class="reservation-form__checkbox-label">
+              <input
+                type="checkbox"
+                formControlName="needsSmoking"
+                class="reservation-form__checkbox"
+              />
+              <span class="reservation-form__checkbox-text">
+                Smoking section preferred
+              </span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reservation-form__step" *ngIf="currentStep === 3">
+      <div class="reservation-form__step-header">
+        <h2 class="reservation-form__step-title">Choose your dining area</h2>
+        <p class="reservation-form__step-subtitle">
+          Select from our available regions
+        </p>
+      </div>
+
+      <div class="reservation-form__step-content">
+        <app-region-selector
+          [selectedDate]="formData.date"
+          [selectedTimeSlot]="formData.timeSlot"
+          [partySize]="formData.partySize"
+          [hasChildren]="formData.hasChildren"
+          [needsSmoking]="formData.needsSmoking"
+          [selectedRegionId]="formData.regionId"
+          [disabled]="isSubmitting"
+          (regionSelected)="onRegionSelected($event)"
+        ></app-region-selector>
+      </div>
+    </div>
+
+    <!-- Step 4: Customer Information -->
+    <div class="reservation-form__step" *ngIf="currentStep === 4">
+      <div class="reservation-form__step-header">
+        <h2 class="reservation-form__step-title">Your contact information</h2>
+        <p class="reservation-form__step-subtitle">
+          We'll use this to confirm your reservation
+        </p>
+      </div>
+
+      <div class="reservation-form__step-content">
+        <div class="reservation-form__form-fields">
+          <app-form-field
+            label="Full Name"
+            type="text"
+            placeholder="Enter your full name"
+            [required]="true"
+            [errors]="getFieldErrors('name')"
+            formControlName="name"
+          ></app-form-field>
+
+          <app-form-field
+            label="Email Address"
+            type="email"
+            placeholder="Enter your email"
+            [required]="true"
+            [errors]="getFieldErrors('email')"
+            hint="We'll send your confirmation here"
+            formControlName="email"
+          ></app-form-field>
+
+          <app-form-field
+            label="Phone Number"
+            type="tel"
+            placeholder="Enter your phone number"
+            [required]="true"
+            [errors]="getFieldErrors('phone')"
+            hint="In case we need to contact you"
+            formControlName="phone"
+          ></app-form-field>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="reservation-form__availability"
+      *ngIf="availabilityChecking || availabilityError"
+    >
+      <div
+        class="reservation-form__availability-checking"
+        *ngIf="availabilityChecking"
+      >
+        <app-loading-spinner
+          size="small"
+          message="Checking availability..."
+        ></app-loading-spinner>
+      </div>
+
+      <div
+        class="reservation-form__availability-error"
+        *ngIf="availabilityError"
+      >
+        ⚠️ {{ availabilityError }}
+      </div>
+    </div>
+
+    <div class="reservation-form__summary" *ngIf="showSummary">
+      <app-reservation-summary
+        [reservationData]="formData"
+        [isSubmitting]="isSubmitting"
+        (confirmed)="onSubmit()"
+        (editRequested)="showSummary = false"
+      ></app-reservation-summary>
+    </div>
+
+    <div class="reservation-form__navigation" *ngIf="!showSummary">
+      <button
+        type="button"
+        class="reservation-form__nav-btn reservation-form__nav-btn--secondary"
+        [class.disabled]="currentStep === 1 || isSubmitting"
+        (click)="prevStep()"
+      >
+        Previous
+      </button>
+
+      <button
+        type="button"
+        class="reservation-form__nav-btn reservation-form__nav-btn--primary"
+        [class.disabled]="
+          !isCurrentStepValid() || isSubmitting || availabilityError
+        "
+        (click)="nextStep()"
+      >
+        {{ currentStep === totalSteps ? "Review Reservation" : "Next" }}
+      </button>
+    </div>
+  </form>
+</div>
